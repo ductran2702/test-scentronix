@@ -1,0 +1,1 @@
+export const NO_SERVERS_ERROR = "No servers are online"
