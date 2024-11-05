@@ -1,5 +1,5 @@
 import { NO_SERVERS_ERROR } from "./errors";
-import fetch from './fetchWithTimeout'
+import fetch from './utils/fetchWithTimeout'
 
 export interface Server {
   url: string; // The URL of the server
