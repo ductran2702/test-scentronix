@@ -77,7 +77,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ productId }) => {
     if (!isOpen || (!fetching && !error && options.length)) return;
 
     setFetching(true);
-    new Promise((res) => setTimeout(() => res(dummyOptions), 2000))
+    new Promise((res) => setTimeout(() => res(dummyOptions), 500))
       .then((data) => setOptions(data as ProductOption[]))
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -114,17 +114,22 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ productId }) => {
 
     const rect = menuRef.current.getBoundingClientRect();
     const middlePoint = anchorPosition.height / 2 + anchorPosition.top;
-    const hasOverflow = menuRef.current.clientHeight < menuRef.current.scrollHeight;
+    const hasOverflow = !fetching && !error && menuRef.current.clientHeight < menuRef.current.scrollHeight;
     
     let top, left;
 
     if (fetching || error) {
-      top = anchorPosition.top;
+      top =
+        middlePoint + rect.height / 2 > window.innerHeight
+          ? window.innerHeight - rect.height
+          : middlePoint - rect.height / 2 < 0
+          ? 0
+          : middlePoint - rect.height / 2;
       left = anchorPosition.right - anchorPosition.height - CLOSE_BUTTON_DISTANCE - rect.width;
-    } else if (middlePoint - rect.height / 2 < 0) {
+    } else if (middlePoint - (rect.height + (options.length - 1) * GAP_BETWEEN_MENU_ITEMS) / 2 < 0) {
       top = hasOverflow ? 0 : (options.length - 1) * GAP_BETWEEN_MENU_ITEMS;
       left = anchorPosition.right - anchorPosition.height - CLOSE_BUTTON_DISTANCE - rect.width;
-    } else if (middlePoint + rect.height / 2 > window.innerHeight) {
+    } else if (middlePoint + (rect.height+ ((options.length - 1) * GAP_BETWEEN_MENU_ITEMS)) / 2 > window.innerHeight) {
       top = window.innerHeight - rect.height;
       left = anchorPosition.right - anchorPosition.height - CLOSE_BUTTON_DISTANCE - rect.width;
     } else {
