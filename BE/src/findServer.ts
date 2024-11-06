@@ -26,7 +26,7 @@ async function findServer(
 ): Promise<Server> {
   // Create an array of requests to each server URL with timeout handling
   const requests = servers.map((server) => {
-    return fetch(server.url, { method: "GET" }).then((response: any) => {
+    return fetch(server.url, { method: "GET" }, timeout).then((response: any) => {
       // Check if the response status is in the range of 200-299
       if (response.status >= 200 && response.status < 300) {
         return server; // Return the server if online
